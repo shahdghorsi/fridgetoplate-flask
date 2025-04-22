@@ -7,6 +7,8 @@ using Google Cloud Vision API or mock data for development.
 import os
 import io
 import base64
+import json
+import tempfile
 from flask import current_app
 from google.cloud import vision
 from google.oauth2 import service_account
@@ -93,46 +95,62 @@ def _vision_api_recognize_ingredients(image_path):
     Returns:
         list: List of recognized ingredient names
     """
-    api_key = current_app.config.get('GOOGLE_CLOUD_VISION_API_KEY')
-    
-    if not api_key:
-        current_app.logger.warning("Google Cloud Vision API key not found, using mock data")
-        return _mock_recognize_ingredients(image_path)
-    
     try:
-        # Initialize Vision client
-        client = vision.ImageAnnotatorClient.from_service_account_json(api_key)
+        # Get credentials from environment variable
+        credentials_base64 = os.environ.get('GOOGLE_CLOUD_CREDENTIALS_BASE64')
         
-        # Read image file
-        with io.open(image_path, 'rb') as image_file:
-            content = image_file.read()
+        if not credentials_base64:
+            current_app.logger.warning("Google Cloud credentials not found, using mock data")
+            return _mock_recognize_ingredients(image_path)
         
-        image = vision.Image(content=content)
+        # Decode the base64 credentials
+        credentials_json = base64.b64decode(credentials_base64).decode('utf-8')
         
-        # Perform label detection
-        response = client.label_detection(image=image)
-        labels = response.label_annotations
+        # Create a temporary file to store the credentials
+        with tempfile.NamedTemporaryFile(delete=False, mode='w') as temp_file:
+            temp_file.write(credentials_json)
+            temp_file_path = temp_file.name
         
-        # Filter for food-related labels
-        food_labels = []
-        for label in labels:
-            if _is_food_related(label.description):
-                food_labels.append(label.description.lower())
-        
-        # If no food items detected, use object detection as fallback
-        if not food_labels:
-            response = client.object_localization(image=image)
-            objects = response.localized_object_annotations
+        try:
+            # Initialize Vision client with service account credentials
+            credentials = service_account.Credentials.from_service_account_file(temp_file_path)
+            client = vision.ImageAnnotatorClient(credentials=credentials)
             
-            for obj in objects:
-                if _is_food_related(obj.name):
-                    food_labels.append(obj.name.lower())
+            # Read image file
+            with io.open(image_path, 'rb') as image_file:
+                content = image_file.read()
+            
+            image = vision.Image(content=content)
+            
+            # Perform label detection
+            response = client.label_detection(image=image)
+            labels = response.label_annotations
+            
+            # Filter for food-related labels
+            food_labels = []
+            for label in labels:
+                if _is_food_related(label.description):
+                    food_labels.append(label.description.lower())
+            
+            # If no food items detected, use object detection as fallback
+            if not food_labels:
+                response = client.object_localization(image=image)
+                objects = response.localized_object_annotations
+                
+                for obj in objects:
+                    if _is_food_related(obj.name):
+                        food_labels.append(obj.name.lower())
+            
+            # Map detected labels to known ingredients
+            ingredients = _map_labels_to_ingredients(food_labels)
+            
+            return ingredients
         
-        # Map detected labels to known ingredients
-        ingredients = _map_labels_to_ingredients(food_labels)
-        
-        return ingredients
-        
+        finally:
+            # Clean up the temporary file
+            if os.path.exists(temp_file_path):
+                os.unlink(temp_file_path)
+                
     except Exception as e:
         current_app.logger.error(f"Error using Vision API: {str(e)}")
         return _mock_recognize_ingredients(image_path)
