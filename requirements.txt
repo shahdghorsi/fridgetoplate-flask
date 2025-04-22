@@ -1,0 +1,25 @@
+# Python dependencies for FridgeToPlate application
+
+# Flask and extensions
+Flask==2.3.3
+Flask-SQLAlchemy==3.1.1
+Werkzeug==2.3.7
+
+# Database
+SQLAlchemy==2.0.21
+
+# Environment variables
+python-dotenv==1.0.0
+
+# Image processing
+Pillow==10.0.1
+
+# API clients
+google-cloud-vision==3.4.5
+requests==2.31.0
+
+# Utilities
+uuid==1.30
+
+# Production server
+gunicorn==20.1.0

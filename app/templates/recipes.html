@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FridgeToPlate - Recipes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">FridgeToPlate</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.capture') }}">Capture</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('ingredients.list_ingredients') }}">Ingredients</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('recipes.list_recipes') }}">Recipes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.about') }}">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Recipe Suggestions</h1>
+                    <a href="{{ url_for('ingredients.list_ingredients') }}" class="btn btn-primary">
+                        Manage Ingredients
+                    </a>
+                </div>
+                
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="card-title">Fusion Recipe Generator</h2>
+                        <p class="card-text">
+                            Create unique fusion recipes by combining different culinary traditions.
+                        </p>
+                        
+                        <form id="fusion-form">
+                            <div class="mb-3">
+                                <label class="form-label">Select Cuisines to Combine</label>
+                                <div class="row">
+                                    <div class="col-md-3 col-6 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input cuisine-checkbox" type="checkbox" value="Italian" id="italian">
+                                            <label class="form-check-label" for="italian">Italian</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input cuisine-checkbox" type="checkbox" value="Mexican" id="mexican">
+                                            <label class="form-check-label" for="mexican">Mexican</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input cuisine-checkbox" type="checkbox" value="Indian" id="indian">
+                                            <label class="form-check-label" for="indian">Indian</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input cuisine-checkbox" type="checkbox" value="Chinese" id="chinese">
+                                            <label class="form-check-label" for="chinese">Chinese</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input cuisine-checkbox" type="checkbox" value="Japanese" id="japanese">
+                                            <label class="form-check-label" for="japanese">Japanese</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input cuisine-checkbox" type="checkbox" value="Thai" id="thai">
+                                            <label class="form-check-label" for="thai">Thai</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input cuisine-checkbox" type="checkbox" value="French" id="french">
+                                            <label class="form-check-label" for="french">French</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input cuisine-checkbox" type="checkbox" value="Mediterranean" id="mediterranean">
+                                            <label class="form-check-label" for="mediterranean">Mediterranean</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-success" id="generate-fusion-btn">Generate Fusion Recipe</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div id="fusion-recipe-card" class="card mb-4 d-none">
+                    <div class="card-body">
+                        <h2 class="card-title" id="fusion-recipe-title"></h2>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h5>Ingredients</h5>
+                                <ul id="fusion-ingredients-list" class="list-group mb-3">
+                                    <!-- Ingredients will be added here dynamically -->
+                                </ul>
+                                <div class="mb-3">
+                                    <span class="badge bg-primary me-1">Servings: <span id="fusion-servings"></span></span>
+                                    <span class="badge bg-secondary">Time: <span id="fusion-time"></span> min</span>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <h5>Instructions</h5>
+                                <p id="fusion-instructions" class="card-text"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="fusion-error-alert" class="alert alert-danger d-none" role="alert">
+                    <!-- Error messages will be displayed here -->
+                </div>
+                
+                <div id="fusion-loading" class="text-center d-none">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Generating fusion recipe...</p>
+                </div>
+                
+                <h2 class="mb-3 mt-5">Recipes Based on Your Ingredients</h2>
+                
+                {% if ingredients|length == 0 %}
+                    <div class="alert alert-info">
+                        No ingredients available. Please add ingredients to get recipe suggestions.
+                    </div>
+                {% elif recipes|length == 0 %}
+                    <div class="alert alert-info">
+                        No recipes found for your ingredients. Try adding more ingredients or using the fusion recipe generator.
+                    </div>
+                {% else %}
+                    <div class="row row-cols-1 row-cols-md-2 g-4">
+                        {% for recipe in recipes %}
+                            <div class="col">
+                                <div class="card h-100">
+                                    {% if recipe.image_url %}
+                                        <img src="{{ recipe.image_url }}" class="card-img-top" alt="{{ recipe.title }}">
+                                    {% endif %}
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ recipe.title }}</h5>
+                                        <p class="card-text">{{ recipe.summary|safe|truncate(150) }}</p>
+                                        <div class="mb-2">
+                                            <span class="badge bg-primary me-1">Servings: {{ recipe.servings }}</span>
+                                            <span class="badge bg-secondary">Time: {{ recipe.ready_in_minutes }} min</span>
+                                        </div>
+                                        <a href="{{ url_for('recipes.recipe_detail', recipe_id=recipe.id) }}" class="btn btn-primary">View Recipe</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-light py-4 mt-5">
+        <div class="container text-center">
+            <p>&copy; 2025 FridgeToPlate. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fusionForm = document.getElementById('fusion-form');
+            const cuisineCheckboxes = document.querySelectorAll('.cuisine-checkbox');
+            const fusionRecipeCard = document.getElementById('fusion-recipe-card');
+            const fusionRecipeTitle = document.getElementById('fusion-recipe-title');
+            const fusionIngredientsList = document.getElementById('fusion-ingredients-list');
+            const fusionInstructions = document.getElementById('fusion-instructions');
+            const fusionServings = document.getElementById('fusion-servings');
+            const fusionTime = document.getElementById('fusion-time');
+            const fusionErrorAlert = document.getElementById('fusion-error-alert');
+            const fusionLoading = document.getElementById('fusion-loading');
+            
+            // Handle fusion form submission
+            fusionForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get selected cuisines
+                const selectedCuisines = [];
+                cuisineCheckboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        selectedCuisines.push(checkbox.value);
+                    }
+                });
+                
+                if (selectedCuisines.length < 2) {
+                    showFusionError('Please select at least two cuisines to combine.');
+                    return;
+                }
+                
+                // Show loading indicator
+                fusionLoading.classList.remove('d-none');
+                fusionErrorAlert.classList.add('d-none');
+                fusionRecipeCard.classList.add('d-none');
+                
+                // Send request to server
+                fetch('/recipes/fusion', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        cuisines: selectedCuisines
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Hide loading indicator
+                    fusionLoading.classList.add('d-none');
+                    
+                    if (data.success) {
+                        // Display fusion recipe
+                        displayFusionRecipe(data.recipe);
+                        fusionRecipeCard.classList.remove('d-none');
+                    } else {
+                        showFusionError(data.error || 'An error occurred while generating the fusion recipe.');
+                    }
+                })
+                .catch(error => {
+                    // Hide loading indicator
+                    fusionLoading.classList.add('d-none');
+                    showFusionError('An error occurred while generating the fusion recipe. Please try again.');
+                    console.error('Error:', error);
+                });
+            });
+            
+            function displayFusionRecipe(recipe) {
+                // Set recipe title
+                fusionRecipeTitle.textContent = recipe.title;
+                
+                // Set ingredients list
+                fusionIngredientsList.innerHTML = '';
+                recipe.ingredients.forEach(ingredient => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item';
+                    li.textContent = ingredient;
+                    fusionIngredientsList.appendChild(li);
+                });
+                
+                // Set instructions
+                fusionInstructions.innerHTML = recipe.instructions.replace(/\n/g, '<br>');
+                
+                // Set servings and time
+                fusionServings.textContent = recipe.servings;
+                fusionTime.textContent = recipe.ready_in_minutes;
+            }
+            
+            function showFusionError(message) {
+                fusionErrorAlert.textContent = message;
+                fusionErrorAlert.classList.remove('d-none');
+            }
+        });
+    </script>
+</body>
+</html>
