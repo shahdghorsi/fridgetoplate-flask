@@ -15,8 +15,10 @@ import requests
 from PIL import Image
 import io
 
-# Create Flask application
-app = Flask(__name__)
+# Create Flask application with explicit template and static folder paths
+app = Flask(__name__, 
+           template_folder=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'app/templates'),
+           static_folder=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'app/static'))
 
 # Configure application
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-key-for-testing')
