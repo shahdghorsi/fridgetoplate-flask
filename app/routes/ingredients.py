@@ -30,7 +30,7 @@ def add_ingredient():
         ingredient = Ingredient(name=name)
         db.session.add(ingredient)
         db.session.commit()
-    return redirect(url_for('ingredients.list_ingredients'))
+    return redirect(url_for('ingredients'))
 
 @ingredients_bp.route('/delete/<int:id>', methods=['POST'])
 def delete_ingredient(id):
@@ -38,7 +38,7 @@ def delete_ingredient(id):
     ingredient = Ingredient.query.get_or_404(id)
     db.session.delete(ingredient)
     db.session.commit()
-    return redirect(url_for('ingredients.list_ingredients'))
+    return redirect(url_for('ingredients'))
 
 @ingredients_bp.route('/upload', methods=['POST'])
 def upload_image():
