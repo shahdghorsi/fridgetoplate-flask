@@ -26,7 +26,7 @@
                         <a class="nav-link" href="{{ url_for('ingredients') }}">Ingredients</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('recipes.list_recipes') }}">Recipes</a>
+                        <a class="nav-link" href="{{ url_for('recipes') }}">Recipes</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('about') }}">About</a>
@@ -45,7 +45,7 @@
                 </p>
                 <div class="d-grid gap-2 d-md-flex justify-content-md-start mt-4">
                     <a href="{{ url_for('main.capture') }}" class="btn btn-primary btn-lg px-4 me-md-2">Capture Ingredients</a>
-                    <a href="{{ url_for('recipes.list_recipes') }}" class="btn btn-outline-secondary btn-lg px-4">Find Recipes</a>
+                    <a href="{{ url_for('recipes') }}" class="btn btn-outline-secondary btn-lg px-4">Find Recipes</a>
                 </div>
             </div>
             <div class="col-md-6">
@@ -68,7 +68,7 @@
                     <div class="card-body text-center">
                         <h3 class="card-title">Discover</h3>
                         <p class="card-text">Find recipes that match your available ingredients and dietary preferences.</p>
-                        <a href="{{ url_for('recipes.list_recipes') }}" class="btn btn-primary">Find Recipes</a>
+                        <a href="{{ url_for('recipes') }}" class="btn btn-primary">Find Recipes</a>
                     </div>
                 </div>
             </div>
@@ -77,7 +77,7 @@
                     <div class="card-body text-center">
                         <h3 class="card-title">Create</h3>
                         <p class="card-text">Generate unique fusion recipes combining different culinary traditions.</p>
-                        <a href="{{ url_for('recipes.list_recipes') }}" class="btn btn-primary">Try Fusion</a>
+                        <a href="{{ url_for('recipes') }}" class="btn btn-primary">Try Fusion</a>
                     </div>
                 </div>
             </div>
